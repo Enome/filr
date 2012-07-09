@@ -14,7 +14,7 @@ module.exports = function (app, dir, password) {
 
   });
 
-  app.post('/:password/:bundle', function (req, res, next) {
+  app.post('/:password/:bundle/:filename', function (req, res, next) {
 
     if (req.params.password !== password) {
       res.status(401);
@@ -29,6 +29,9 @@ module.exports = function (app, dir, password) {
     req.pipe(fs.createWriteStream(bundle_dir + '/' + name));
 
     req.on('end', function () {
+
+      console.log('Create file: ' + req.params.filename + ' => ' + bundle + '/' + name);
+
       res.json({
         name: name,
         bundle: bundle,

@@ -9,7 +9,8 @@ module.exports = function (settings) {
   return {
 
     post: function (path, callback) {
-      fs.createReadStream(path).pipe(request.post(url, function (err, resp, body) {
+      var filename = path.replace(/.*\//, '');
+      fs.createReadStream(path).pipe(request.post(url + '/' + filename, function (err, resp, body) {
 
         if (err) { return callback(err); }
         callback(null, JSON.parse(body));
