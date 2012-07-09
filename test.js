@@ -2,13 +2,13 @@ var fs = require('fs');
 var http = require('http');
 var rimraf = require('rimraf');
 var request = require('request');
-var app = require('./app.js');
-var server = http.createServer(app);
-var settings = require('./settings');
+var express = require('express');
 
+var app = express();
 var base = __dirname + '/output';
-settings.base_dir = base;
-settings.password = '1234';
+var middleware = require('./middleware')(app, base, '1234');
+var server = http.createServer(app);
+var client = require('./client');
 
 describe('Lemon', function () {
 
@@ -25,15 +25,18 @@ describe('Lemon', function () {
 
   it('creates the file then requests it again', function (done) {
 
-    var crs = fs.createReadStream(__dirname + '/file.txt');
-    var r = request.post('http://0.0.0.0:9999/1234/test', function (err, res, body) {
-      request.get('http://' + JSON.parse(body).url, function (err, res, body) {
-        body.should.eql('Beep Beep this is a test.\n');
-        done();
-      });
-    });
+    var c = client({ url: '0.0.0.0:9999', bundle: 'test', password: '1234' });
 
-    crs.pipe(r);
+    c.post(__dirname + '/file.txt', function (err, resp, body) {
+
+      c.get(resp.name, function (err, resp) {
+
+        resp.should.eql('Beep Beep this is a test.\n');
+        done();
+
+      });
+
+    });
 
   });
 
