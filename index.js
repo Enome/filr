@@ -1,4 +1,4 @@
 module.exports = {
   client: require('./client'),
-  middleware: require('./middleware')
+  app: require('./app')
 };

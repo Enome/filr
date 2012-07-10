@@ -2,13 +2,12 @@ var fs = require('fs');
 var http = require('http');
 var rimraf = require('rimraf');
 var request = require('request');
-var express = require('express');
 
-var app = express();
-var base = __dirname + '/output';
-var middleware = require('./middleware')(app, base, '1234');
-var server = http.createServer(app);
+var app = require('./app');
 var client = require('./client');
+
+var base = __dirname + '/output';
+var server = http.createServer(app({dir: base, password: '1234'}));
 
 describe('Lemon', function () {
 
@@ -27,7 +26,7 @@ describe('Lemon', function () {
 
     var c = client({ url: '0.0.0.0:9999', bundle: 'test', password: '1234' });
 
-    c.post(__dirname + '/file.txt', function (err, resp, body) {
+    c.post(__dirname + '/file.txt', 'file.txt', function (err, resp, body) {
 
       c.get(resp.name, function (err, resp) {
 

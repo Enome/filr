@@ -8,8 +8,8 @@ module.exports = function (settings) {
 
   return {
 
-    post: function (path, callback) {
-      var filename = path.replace(/.*\//, '');
+    post: function (path, filename, callback) {
+
       fs.createReadStream(path).pipe(request.post(url + '/' + filename, function (err, resp, body) {
 
         if (err) { return callback(err); }
@@ -20,9 +20,14 @@ module.exports = function (settings) {
 
     get: function (name, callback) {
 
-      request.get(url + '/' + name, function (err, resp, body) {
+      return request.get(url + '/' + name, function (err, resp, body) {
+
+        if (!callback) {
+          return;
+        }
 
         if (err) { return callback(err); }
+
         callback(null, body);
 
       });
