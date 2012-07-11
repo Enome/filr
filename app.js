@@ -6,6 +6,10 @@ module.exports = function (settings) {
 
   var app = express();
 
+  app.get('/', function (req, res) {
+    fs.createReadStream(__dirname + '/package.json').pipe(res);
+  });
+
   app.get('/:password/:bundle/:file', function (req, res) {
 
     var crs = fs.createReadStream(settings.dir + '/' + req.params.bundle + '/' + req.params.file);
@@ -31,11 +35,8 @@ module.exports = function (settings) {
 
       console.log('create file: ' + req.params.filename + ' => ' + bundle + '/' + name);
 
-      res.json({
-        name: name,
-        bundle: bundle,
-        url: url
-      });
+      res.json({ name: name, bundle: bundle, url: url });
+
     });
             
   });
