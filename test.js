@@ -7,9 +7,9 @@ var app = require('./app');
 var client = require('./client');
 
 var base = __dirname + '/output';
-var server = http.createServer(app({dir: base, password: '1234'}));
+var server = http.createServer(app({dir: base, default: __dirname + '/default.txt', password: '1234'}));
 
-describe('Lemon', function () {
+describe('Filr', function () {
 
   before(function (done) {
     
@@ -38,5 +38,24 @@ describe('Lemon', function () {
     });
 
   });
+
+
+  it('uses default is file doesnt exist', function (done) {
+
+    var c = client({ url: '0.0.0.0:9999',  bundle: 'test', password: '1234' });
+
+    c.post(__dirname + '/file.txt', 'file.txt', function (err, resp, body) {
+
+      c.get('undefined', function (err, resp) {
+
+        resp.should.eql('default text\n');
+        done();
+
+      });
+
+    });
+
+  });
+
 
 });

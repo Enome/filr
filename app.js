@@ -12,8 +12,26 @@ module.exports = function (settings) {
 
   app.get('/:password/:bundle/:file', function (req, res) {
 
-    var crs = fs.createReadStream(settings.dir + '/' + req.params.bundle + '/' + req.params.file);
-    crs.pipe(res);
+    var file = settings.dir + '/' + req.params.bundle + '/' + req.params.file;
+
+    fs.exists(file, function (exists) {
+
+      var crs;
+
+      if (exists) {
+        crs = fs.createReadStream(file);
+      } else {
+        crs = fs.createReadStream(settings.default);
+      }
+
+      crs.on('error', function (err) {
+        console.log(err);
+      });
+
+      crs.pipe(res);
+
+    });
+
 
   });
 
